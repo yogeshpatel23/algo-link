@@ -2,26 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer components {
+    .vy-input {
+        @apply w-full dark:bg-gray-800 dark:text-white border-b-2 py-1 pl-10 pr-2 focus-visible:outline-none placeholder:text-transparent;
+    }
+    .vy-label {
+        @apply w-full h-full transition-all absolute peer-placeholder-shown:left-10 peer-placeholder-shown:top-1 left-1 -top-3.5 text-gray-700 dark:text-white text-xs peer-focus-visible:left-1 peer-focus-visible:-top-3.5 
+        peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
+        peer-focus-visible:text-xs peer-focus-visible:text-gray-800 dark:peer-focus-visible:text-white after:content-[''] after:absolute after:inset-x-0 after:h-1 after:-bottom-3.5 after:bg-blue-600 after:transition-all peer-placeholder-shown:after:scale-x-0 peer-placeholder-shown:after:bottom-1 after:scale-x-105 peer-focus-visible:after:scale-x-105 peer-focus-visible:after:-bottom-3.5;
+    }
 }

@@ -15,3 +15,5 @@ export const AccountSchema = z.object({
   token: z.string().min(1).optional(),
   tokenExp: z.string().min(1).optional(),
 });
+
+export type Account = z.infer<typeof AccountSchema>;

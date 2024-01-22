@@ -1,15 +1,15 @@
-import { AccountSchema } from "@/model/account.model";
+import { VyApi } from "@/lib/VyApi";
+import { Account } from "@/model/accountSchema";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { z } from "zod";
-
-type Account = z.infer<typeof AccountSchema>;
 
 export interface AccountState {
   accounts: Account[];
+  selectedAcc: VyApi | null;
 }
 
 const initialState: AccountState = {
   accounts: [],
+  selectedAcc: null,
 };
 
 const accountSlice = createSlice({
@@ -25,9 +25,12 @@ const accountSlice = createSlice({
     // updateToken: (state, action: PayloadAction<string> ) => {
 
     // }
+    setSelectedAcc: (state, action: PayloadAction<VyApi>) => {
+      state.selectedAcc = action.payload;
+    },
   },
 });
 
-export const { initAccount, addAccount } = accountSlice.actions;
+export const { initAccount, addAccount, setSelectedAcc } = accountSlice.actions;
 
 export default accountSlice.reducer;

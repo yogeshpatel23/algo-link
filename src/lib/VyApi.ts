@@ -1,3 +1,10 @@
+import { BrokerErrorResponse, SearchScriptResponse } from "./types";
+
 export interface VyApi {
-  searchScript(stext: string, exch: string): void;
+  uid: string;
+  token: string;
+  searchScript(
+    stext: string,
+    exch: string
+  ): Promise<SearchScriptResponse | BrokerErrorResponse>;
 }

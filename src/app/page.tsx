@@ -8,10 +8,15 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { setSelectedAcc } from "@/store/accountSlice";
+import { FlattradeApi } from "@/lib/flattradeApi";
 
 export default function Home() {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const accounts = useSelector((store: RootState) => store.accounts.accounts);
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-8 px-2">
@@ -54,6 +59,16 @@ export default function Home() {
                     variant="outline"
                     disabled={!isValid}
                     className="p-2"
+                    onClick={() => {
+                      if (account.broker === "flattrade") {
+                        dispatch(
+                          setSelectedAcc(
+                            new FlattradeApi(account.userId, account.token!)
+                          )
+                        );
+                      }
+                      router.push("/terminal");
+                    }}
                   >
                     <CommandLineIcon className="w-4 h-4" />
                   </Button>

@@ -1,9 +1,6 @@
 import { getFileData, saveFile } from "@/lib/filehandel";
-import { AccountSchema } from "@/model/account.model";
+import { Account } from "@/model/accountSchema";
 import { NextResponse } from "next/server";
-import { z } from "zod";
-
-type Account = z.infer<typeof AccountSchema>;
 
 export const GET = async (requst: Request) => {
   const res = await getFileData("accounts.txt");

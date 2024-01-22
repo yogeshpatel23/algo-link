@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { BROKER } from "@/lib/constants";
-import { AccountSchema } from "@/model/account.model";
+import { AccountSchema, Account } from "@/model/accountSchema";
 import { addAccount } from "@/store/accountSlice";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,7 +31,7 @@ export default function AddAccount() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof AccountSchema>>({
+  const form = useForm<Account>({
     resolver: zodResolver(AccountSchema),
     defaultValues: {
       name: "",
@@ -42,7 +42,7 @@ export default function AddAccount() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof AccountSchema>) {
+  async function onSubmit(values: Account) {
     try {
       const res = await fetch("/api/accounts", {
         method: "POST",

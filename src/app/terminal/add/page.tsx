@@ -4,22 +4,37 @@ import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { VyApi } from "@/lib/VyApi";
+import { FlattradeApi } from "@/lib/flattradeApi";
 import { NFOScript, NSEScript } from "@/lib/types";
 import { RootState } from "@/store";
+import { addToWhatchlist } from "@/store/watchlistSlice";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function AddScript() {
   const [stext, setStext] = useState("");
   const [exch, setExch] = useState("NFO");
   const [scripts, setScripts] = useState<(NFOScript | NSEScript)[]>([]);
   const { toast } = useToast();
+  const dispatch = useDispatch();
   const selectedAcc = useSelector(
     (store: RootState) => store.accounts.selectedAcc
   );
+
+  const vy = useRef<VyApi>();
+
+  useEffect(() => {
+    if (!selectedAcc) return;
+    if (selectedAcc?.broker === "flattrade") {
+      vy.current = new FlattradeApi(selectedAcc.userId, selectedAcc.token!);
+    } else {
+      throw new Error("invalid borker");
+    }
+  }, []);
 
   useEffect(() => {
     if (stext.length < 3) return;
@@ -34,7 +49,7 @@ export default function AddScript() {
 
   // /////////////////
   async function searchScript() {
-    const data = await selectedAcc?.searchScript(stext, exch);
+    const data = await vy.current?.searchScript(stext, exch);
     if (data) {
       if (data.stat === "Not_Ok") {
         toast({ variant: "destructive", description: data.emsg });
@@ -75,6 +90,9 @@ export default function AddScript() {
           <div
             key={script.token}
             className="border rounded-lg bg-slate-950 dark:bg-slate-900 p-2 cursor-pointer hover:scale-105"
+            onClick={() => {
+              dispatch(addToWhatchlist(script));
+            }}
           >
             {script.exch === "NSE" ? (
               <div className="text-sm">

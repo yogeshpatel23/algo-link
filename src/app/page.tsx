@@ -60,13 +60,7 @@ export default function Home() {
                     disabled={!isValid}
                     className="p-2"
                     onClick={() => {
-                      if (account.broker === "flattrade") {
-                        dispatch(
-                          setSelectedAcc(
-                            new FlattradeApi(account.userId, account.token!)
-                          )
-                        );
-                      }
+                      dispatch(setSelectedAcc(account));
                       router.push("/terminal");
                     }}
                   >

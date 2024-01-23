@@ -4,6 +4,7 @@ import { BrokerErrorResponse, SearchScriptResponse } from "./types";
 
 export class FlattradeApi implements VyApi {
   baseurl: string = "https://piconnect.flattrade.in/PiConnectTP";
+  wsurl: string = "wss://piconnect.flattrade.in/PiConnectWSTp/";
 
   constructor(public uid: string, public token: string) {}
   static async getToken(key: string, code: string, secret: string) {
@@ -24,6 +25,10 @@ export class FlattradeApi implements VyApi {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  getWsUrl(): string {
+    return this.wsurl;
   }
 
   async searchScript(

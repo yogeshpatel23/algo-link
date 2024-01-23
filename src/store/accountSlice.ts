@@ -1,10 +1,9 @@
-import { VyApi } from "@/lib/VyApi";
 import { Account } from "@/model/accountSchema";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export interface AccountState {
   accounts: Account[];
-  selectedAcc: VyApi | null;
+  selectedAcc: Account | null;
 }
 
 const initialState: AccountState = {
@@ -25,7 +24,7 @@ const accountSlice = createSlice({
     // updateToken: (state, action: PayloadAction<string> ) => {
 
     // }
-    setSelectedAcc: (state, action: PayloadAction<VyApi>) => {
+    setSelectedAcc: (state, action: PayloadAction<Account>) => {
       state.selectedAcc = action.payload;
     },
   },

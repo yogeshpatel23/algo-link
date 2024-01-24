@@ -1,6 +1,12 @@
 import { VyApi } from "./VyApi";
 import { sha256 } from "js-sha256";
-import { BrokerErrorResponse, SearchScriptResponse } from "./types";
+import {
+  BrokerErrorResponse,
+  BrokerOrder,
+  OrderResponse,
+  SearchScriptResponse,
+} from "./types";
+import { OrderType } from "@/model/orderSchema";
 
 export class FlattradeApi implements VyApi {
   baseurl: string = "https://piconnect.flattrade.in/PiConnectTP";
@@ -46,12 +52,36 @@ export class FlattradeApi implements VyApi {
     );
   }
 
+  async placeOrder(
+    data: OrderType
+  ): Promise<OrderResponse | BrokerErrorResponse> {
+    data.uid = this.uid;
+    data.actid = this.uid;
+    return await this.postCall<OrderResponse | BrokerErrorResponse>(
+      "/PlaceOrder",
+      data
+    );
+  }
+
+  async getOrderBook(): Promise<BrokerOrder[] | BrokerErrorResponse> {
+    return await this.postCall<BrokerOrder[] | BrokerErrorResponse>(
+      "/OrderBook",
+      { uid: this.uid }
+    );
+  }
+
   private async postCall<T>(endpoint: string, payload: {}): Promise<T> {
-    const response = await fetch(`${this.baseurl}${endpoint}`, {
-      method: "POST",
-      body: `jData=${JSON.stringify(payload)}&jKey=${this.token}`,
-    });
-    const responseData = await response.json();
-    return responseData;
+    try {
+      const response = await fetch(`${this.baseurl}${endpoint}`, {
+        method: "POST",
+        body: `jData=${JSON.stringify(payload)}&jKey=${this.token}`,
+      });
+      const responseData = await response.json();
+      return responseData;
+    } catch (error: any) {
+      console.log(error);
+      // console.log(error.message);
+      throw new Error(error.message);
+    }
   }
 }

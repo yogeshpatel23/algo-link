@@ -28,9 +28,18 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { VyApi } from "@/lib/VyApi";
+import { useToast } from "./ui/use-toast";
 
-const Ticker = ({ script }: { script: NSEScript | NFOScript }) => {
+const Ticker = ({
+  script,
+  vy,
+}: {
+  script: NSEScript | NFOScript;
+  vy: VyApi;
+}) => {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
   const form = useForm<OrderType>({
     resolver: zodResolver(OrderShema),
     defaultValues: {
@@ -40,9 +49,25 @@ const Ticker = ({ script }: { script: NSEScript | NFOScript }) => {
       prctyp: "MKT",
     },
   });
-  function onSubmit(data: OrderType) {
-    console.log(data);
-    setOpen(false);
+  async function onSubmit(data: OrderType) {
+    try {
+      const res = await vy.placeOrder(data);
+      console.log(res);
+      if (res.stat === "Not_Ok") {
+        toast({
+          variant: "destructive",
+          description: res.emsg,
+        });
+        return;
+      }
+      toast({
+        title: "Success",
+        description: `Order no. ${res.norenordno} placed`,
+      });
+      setOpen(false);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   const showTriggerInput =

@@ -1,4 +1,10 @@
-import { BrokerErrorResponse, SearchScriptResponse } from "./types";
+import { OrderType } from "@/model/orderSchema";
+import {
+  BrokerErrorResponse,
+  BrokerOrder,
+  OrderResponse,
+  SearchScriptResponse,
+} from "./types";
 
 export interface VyApi {
   uid: string;
@@ -8,4 +14,6 @@ export interface VyApi {
     stext: string,
     exch: string
   ): Promise<SearchScriptResponse | BrokerErrorResponse>;
+  placeOrder(data: OrderType): Promise<OrderResponse | BrokerErrorResponse>;
+  getOrderBook(): Promise<BrokerOrder[] | BrokerErrorResponse>;
 }

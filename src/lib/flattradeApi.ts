@@ -94,6 +94,7 @@ export class FlattradeApi implements VyApi {
   private async postCall<T>(endpoint: string, payload: {}): Promise<T> {
     try {
       const response = await fetch(`${this.baseurl}${endpoint}`, {
+        headers: { "Content-Type": "text/plain" },
         method: "POST",
         body: `jData=${JSON.stringify(payload)}&jKey=${this.token}`,
       });

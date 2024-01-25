@@ -108,7 +108,9 @@ export const Order = ({ order, vy }: { order: BrokerOrder; vy: VyApi }) => {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Modify Order</DialogTitle>
-                  <DialogDescription>{order.tsym}</DialogDescription>
+                  <DialogDescription>
+                    {order.tsym} {order.ltp}
+                  </DialogDescription>
                 </DialogHeader>
                 <div>
                   <div>

@@ -9,7 +9,11 @@ import { VyApi } from "@/lib/VyApi";
 import { FlattradeApi } from "@/lib/flattradeApi";
 import { WsResponse } from "@/lib/types";
 import { RootState } from "@/store";
-import { initOrderList } from "@/store/orderSlice";
+import {
+  initOrderList,
+  removeOrdrer,
+  updateOrderLtp,
+} from "@/store/orderSlice";
 import { updateScript } from "@/store/watchlistSlice";
 import { PlusIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -63,8 +67,10 @@ export default function Terminal() {
         return;
       }
       // console.log(res);
-      //TODO: Filter Ordrlist
-      dispatch(initOrderList(res));
+      let filtered = res.filter(
+        (res) => res.status === "PENDING" || res.status === "OPEN"
+      );
+      dispatch(initOrderList(filtered));
     } catch (error: any) {
       toast({ description: error.message });
     }
@@ -88,6 +94,10 @@ export default function Terminal() {
     switch (data.t) {
       case "ck":
         let tokens = scripts.map((script) => `${script.exch}|${script.token}`);
+        tokens = [
+          ...tokens,
+          ...orderList.map((order) => `${order.exch}|${order.token}`),
+        ];
         // Subscribe Order update
         ws.current?.send(
           JSON.stringify({
@@ -108,8 +118,10 @@ export default function Terminal() {
       case "tf":
         if (data.lp && data.pc) {
           dispatch(updateScript({ token: data.tk, lp: data.lp, pc: data.pc }));
+          dispatch(updateOrderLtp({ token: data.tk, lp: data.lp }));
         } else if (data.lp) {
           dispatch(updateScript({ token: data.tk, lp: data.lp }));
+          dispatch(updateOrderLtp({ token: data.tk, lp: data.lp }));
         } else if (data.pc) {
           dispatch(updateScript({ token: data.tk, pc: data.pc }));
         }
@@ -118,10 +130,10 @@ export default function Terminal() {
         switch (data.reporttype) {
           case "New":
           case "Replaced":
-            // getOrders(vy.current!);
+            getOrders(vy.current!);
             break;
           case "Canceled":
-            // remove orde from list
+            dispatch(removeOrdrer(data.norenordno));
             break;
           case "Rejected":
             toast({ variant: "destructive", description: data.rejreason });

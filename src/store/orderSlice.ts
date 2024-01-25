@@ -12,9 +12,23 @@ const orderSlice = createSlice({
     initOrderList: (state, action: PayloadAction<BrokerOrder[]>) => {
       state.orders = action.payload;
     },
+    updateOrderLtp: (state, action) => {
+      state.orders.map((order) => {
+        if (order.token === action.payload.token) {
+          order.ltp = action.payload.lp;
+        }
+        return order;
+      });
+    },
+    removeOrdrer: (state, action: PayloadAction<string>) => {
+      state.orders = state.orders.filter(
+        (order) => order.norenordno === action.payload
+      );
+    },
   },
 });
 
-export const { initOrderList } = orderSlice.actions;
+export const { initOrderList, updateOrderLtp, removeOrdrer } =
+  orderSlice.actions;
 
 export default orderSlice.reducer;

@@ -2,6 +2,11 @@
 import { Order } from "@/components/Order";
 import Ticker from "@/components/Ticker";
 import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -16,6 +21,7 @@ import {
 } from "@/store/orderSlice";
 import { updateScript } from "@/store/watchlistSlice";
 import { PlusIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -158,31 +164,53 @@ export default function Terminal() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="flex justify-between items-center shadow-md p-2  dark:border-b dark:border-b-gray-600">
-        <Link href="/" className={buttonVariants({ variant: "outline" })}>
+    <div className="min-h-screen p-4">
+      <div className="fixed top-0 left-0 flex justify-between items-center p-1">
+        <Link href="/" className={buttonVariants()}>
           <ArrowLeftIcon className="w-4 h-4" />
         </Link>
-        <h2>Watchlist</h2>
-        <Link
-          href="/terminal/add"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          <PlusIcon className="w-4 h-4" />
-        </Link>
       </div>
-      <div className="h-60">
-        {scripts.map((script) => (
-          <Ticker key={script.token} vy={vy.current!} script={script} />
-        ))}
-      </div>
-      <Separator className="my-2" />
-      <div>
-        <h2 className="text-center">Orders</h2>
-        {orderList.map((order) => (
-          <Order key={order.norenordno} order={order} vy={vy.current!} />
-        ))}
-      </div>
+      <ResizablePanelGroup
+        direction="vertical"
+        className="min-h-svh rounded-lg border"
+      >
+        <ResizablePanel defaultSize={40}>
+          <div className="h-60">
+            <h2 className=" text-center">Watchlist</h2>
+            <ScrollArea>
+              <div>
+                {scripts.map((script) => (
+                  <Ticker key={script.token} vy={vy.current!} script={script} />
+                ))}
+
+                <div className="flex justify-center w-full mt-2">
+                  <Link
+                    href="/terminal/add"
+                    className={buttonVariants({ variant: "outline" })}
+                  >
+                    <PlusIcon className="w-4 h-4 mr-2" /> Add
+                  </Link>
+                </div>
+              </div>
+            </ScrollArea>
+          </div>
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={30}>
+          <div>
+            <h2 className="text-center">Orders</h2>
+            {orderList.map((order) => (
+              <Order key={order.norenordno} order={order} vy={vy.current!} />
+            ))}
+          </div>
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={30}>
+          <div>
+            <h2 className="text-center">Positions</h2>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

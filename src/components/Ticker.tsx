@@ -30,6 +30,8 @@ import {
 } from "./ui/form";
 import { VyApi } from "@/lib/VyApi";
 import { useToast } from "./ui/use-toast";
+import { useDispatch } from "react-redux";
+import { removeFromWatchlist } from "@/store/watchlistSlice";
 
 const Ticker = ({
   script,
@@ -40,6 +42,7 @@ const Ticker = ({
 }) => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const dispatch = useDispatch();
   const form = useForm<OrderType>({
     resolver: zodResolver(OrderShema),
     defaultValues: {
@@ -124,7 +127,12 @@ const Ticker = ({
                   S
                 </Button>
               </DrawerTrigger>
-              <XMarkIcon className="w-5 h-5 bg-gray-400 text-red-500 rounded-md p-0.5 cursor-pointer" />
+              <XMarkIcon
+                onClick={() => {
+                  dispatch(removeFromWatchlist(script.token));
+                }}
+                className="w-5 h-5 bg-gray-400 text-red-500 rounded-md p-0.5 cursor-pointer"
+              />
             </div>
           </div>
           <DrawerContent>

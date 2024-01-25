@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,8 +8,12 @@ import { VyApi } from "@/lib/VyApi";
 import { FlattradeApi } from "@/lib/flattradeApi";
 import { NFOScript, NSEScript } from "@/lib/types";
 import { RootState } from "@/store";
-import { addToWhatchlist } from "@/store/watchlistSlice";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { addToWhatchlist, removeFromWatchlist } from "@/store/watchlistSlice";
+import {
+  ArrowLeftIcon,
+  PlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -24,6 +28,7 @@ export default function AddScript() {
   const selectedAcc = useSelector(
     (store: RootState) => store.accounts.selectedAcc
   );
+  const watchlist = useSelector((store: RootState) => store.watchlist.scripts);
 
   const vy = useRef<VyApi>();
 
@@ -85,44 +90,72 @@ export default function AddScript() {
           />
         </div>
       </div>
-      <div className="px-2 space-y-2">
-        {scripts.map((script) => (
-          <div
-            key={script.token}
-            className="border rounded-lg bg-slate-950 dark:bg-slate-900 p-2 cursor-pointer hover:scale-105"
-            onClick={() => {
-              dispatch(addToWhatchlist(script));
-            }}
-          >
-            {script.exch === "NSE" ? (
-              <div className="text-sm">
-                {script.cname}
-                <Badge variant="outline" className="text-xs ml-4">
-                  {script.exch}
-                </Badge>
-                <Badge variant="outline" className="text-xs ml-1">
-                  {script.instname}
-                </Badge>
+      <div className="px-4 md:px-6 space-y-2">
+        {scripts.map((script) => {
+          let inWatchlist =
+            watchlist.find((s) => s.token === script.token) !== undefined;
+          return (
+            <div
+              key={script.token}
+              className="bg-slate-950 dark:bg-slate-900 flex border rounded-lg p-2 cursor-pointer hover:scale-105 transition-all"
+            >
+              <div className="flex-grow">
+                {script.exch === "NSE" ? (
+                  <div className="text-sm">
+                    {script.cname}
+                    <Badge variant="outline" className="text-xs ml-4">
+                      {script.exch}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs ml-1">
+                      {script.instname}
+                    </Badge>
+                  </div>
+                ) : (
+                  <div className="text-sm">
+                    {script.dname}
+                    <Badge variant="outline" className="text-xs ml-4">
+                      {script.exch}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs ml-1">
+                      {script.instname}
+                    </Badge>
+                    {script.weekly && (
+                      <Badge variant="outline" className="text-xs ml-1">
+                        {script.weekly}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+                <div className="text-xs">{script.tsym}</div>
               </div>
-            ) : (
-              <div className="text-sm">
-                {script.dname}
-                <Badge variant="outline" className="text-xs ml-4">
-                  {script.exch}
-                </Badge>
-                <Badge variant="outline" className="text-xs ml-1">
-                  {script.instname}
-                </Badge>
-                {script.weekly && (
-                  <Badge variant="outline" className="text-xs ml-1">
-                    {script.weekly}
-                  </Badge>
+              <div>
+                {inWatchlist ? (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      dispatch(removeFromWatchlist(script.token));
+                      // toast({ description: `${script.tsym} R Watchlist` });
+                    }}
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      dispatch(addToWhatchlist(script));
+                      toast({
+                        description: `${script.tsym} added to Watchlist`,
+                      });
+                    }}
+                  >
+                    <PlusIcon className="w-4 h-4" />
+                  </Button>
                 )}
               </div>
-            )}
-            <div className="text-xs">{script.tsym}</div>
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

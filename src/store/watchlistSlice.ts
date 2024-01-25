@@ -16,6 +16,9 @@ const watchlistSlice = createSlice({
     addToWhatchlist: (state, action: PayloadAction<NFOScript | NSEScript>) => {
       state.scripts.push(action.payload);
     },
+    removeFromWatchlist: (state, action: PayloadAction<string>) => {
+      state.scripts = state.scripts.filter((s) => s.token !== action.payload);
+    },
     updateScript: (state, action) => {
       let s = state.scripts.find((s) => s.token === action.payload.token);
       if (s) {
@@ -30,6 +33,7 @@ const watchlistSlice = createSlice({
   },
 });
 
-export const { addToWhatchlist, updateScript } = watchlistSlice.actions;
+export const { addToWhatchlist, removeFromWatchlist, updateScript } =
+  watchlistSlice.actions;
 
 export default watchlistSlice.reducer;

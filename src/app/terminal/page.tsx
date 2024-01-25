@@ -59,6 +59,7 @@ export default function Terminal() {
     try {
       const res = await vy.getOrderBook();
       if ("stat" in res) {
+        toast({ description: res.emsg });
         return;
       }
       // console.log(res);

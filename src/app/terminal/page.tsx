@@ -88,6 +88,15 @@ export default function Terminal() {
     switch (data.t) {
       case "ck":
         let tokens = scripts.map((script) => `${script.exch}|${script.token}`);
+        // Subscribe Order update
+        ws.current?.send(
+          JSON.stringify({
+            t: "o",
+            uid: selectAcc?.userId,
+            actid: selectAcc?.userId,
+          })
+        );
+        // Subcribe Watchlist script touchline
         ws.current?.send(
           JSON.stringify({
             t: "t",
@@ -103,6 +112,31 @@ export default function Terminal() {
           dispatch(updateScript({ token: data.tk, lp: data.lp }));
         } else if (data.pc) {
           dispatch(updateScript({ token: data.tk, pc: data.pc }));
+        }
+        break;
+      case "om":
+        switch (data.reporttype) {
+          case "New":
+          case "Replaced":
+            // getOrders(vy.current!);
+            break;
+          case "Canceled":
+            // remove orde from list
+            break;
+          case "Rejected":
+            toast({ variant: "destructive", description: data.rejreason });
+            break;
+          case "NewAck" ||
+            "ModAck" ||
+            "PendingNew" ||
+            "PendingReplace" ||
+            "PendingReplace":
+            console.log(data.status);
+            break;
+
+          default:
+            console.log(data);
+            break;
         }
         break;
 
@@ -134,7 +168,7 @@ export default function Terminal() {
       <div>
         <h2 className="text-center">Orders</h2>
         {orderList.map((order) => (
-          <Order key={order.norenordno} order={order} />
+          <Order key={order.norenordno} order={order} vy={vy.current!} />
         ))}
       </div>
     </div>

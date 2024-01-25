@@ -3,10 +3,11 @@ import { sha256 } from "js-sha256";
 import {
   BrokerErrorResponse,
   BrokerOrder,
+  CancelOrderResponse,
   OrderResponse,
   SearchScriptResponse,
 } from "./types";
-import { OrderType } from "@/model/orderSchema";
+import { MOrder, OrderType } from "@/model/orderSchema";
 
 export class FlattradeApi implements VyApi {
   baseurl: string = "https://piconnect.flattrade.in/PiConnectTP";
@@ -60,6 +61,26 @@ export class FlattradeApi implements VyApi {
     return await this.postCall<OrderResponse | BrokerErrorResponse>(
       "/PlaceOrder",
       data
+    );
+  }
+
+  async modifyOrder(
+    data: MOrder
+  ): Promise<CancelOrderResponse | BrokerErrorResponse> {
+    data.uid = this.uid;
+    data.actid = this.uid;
+    return await this.postCall<CancelOrderResponse | BrokerErrorResponse>(
+      "/CancelOrder",
+      data
+    );
+  }
+
+  async cancelOrder(
+    norenordno: string
+  ): Promise<CancelOrderResponse | BrokerErrorResponse> {
+    return await this.postCall<CancelOrderResponse | BrokerErrorResponse>(
+      "/CancelOrder",
+      { norenordno, uid: this.uid }
     );
   }
 

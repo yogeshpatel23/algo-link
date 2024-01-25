@@ -43,6 +43,12 @@ export type OrderResponse = {
   norenordno: string;
 };
 
+export type CancelOrderResponse = {
+  stat: "Ok";
+  request_time: string;
+  result: string;
+};
+
 export type BrokerOrder = {
   stat: string; // Ok or Not_Ok
   norenordno: string; // Noren Order Number
@@ -73,6 +79,7 @@ export type BrokerOrder = {
   status: string; // Order status
   st_intrn: string; //
   norentm: string; //
+  exch_tm?: string;
   remarks: string; // Any message Entered during order entry.
   rejreason?: string; // If order is rejected, reason in text form
   exchordid?: string; // Exchange Order Number
@@ -112,4 +119,36 @@ export type WsTouchLine = {
   sq1?: string;
 };
 
-export type WsResponse = WsConnect | WsTouchLine;
+type WsOrderUpdate = {
+  t: "om"; // "om",
+  norenordno: string; // "24012500098952",
+  uid: string; // "FT006654",
+  actid: string; // "FT006654",
+  exch: string; // "NSE",
+  tsym: string; // "RELIANCE-EQ",
+  trantype: string; // "S",
+  qty: string; // "1",
+  prc: string; // "2684.00",
+  pcode: string; // "I",
+  remarks: string; // "algo-link",
+  rejreason?: string; //
+  status: "PENDING" | "OPEN" | "CANCELED" | "REJECTED";
+  reporttype:
+    | "NewAck"
+    | "PendingNew"
+    | "New"
+    | "ModAck"
+    | "PendingReplace"
+    | "Replaced"
+    | "PendingCancel"
+    | "Canceled"
+    | "Rejected"
+    | string;
+  prctyp: string; // "LMT",
+  ret: string; // "DAY",
+  exchordid: string; // "",
+  dscqty: string; // "0"
+  exch_tm?: string; //"25-01-2024 10:24:51"
+};
+
+export type WsResponse = WsConnect | WsTouchLine | WsOrderUpdate;

@@ -46,6 +46,7 @@ export default function Terminal() {
     }
 
     getOrders(vy.current);
+    getPositions(vy.current);
 
     ws.current = new WebSocket(vy.current.getWsUrl());
     ws.current.onopen = wsOpen;
@@ -77,6 +78,19 @@ export default function Terminal() {
         (res) => res.status === "PENDING" || res.status === "OPEN"
       );
       dispatch(initOrderList(filtered));
+    } catch (error: any) {
+      toast({ description: error.message });
+    }
+  }
+
+  async function getPositions(vy: VyApi) {
+    try {
+      const res = await vy.getPositionBook();
+      if ("stat" in res) {
+        toast({ description: res.emsg }); //Error Occurred : 5 \"no data\"
+        return;
+      }
+      console.log(res);
     } catch (error: any) {
       toast({ description: error.message });
     }
@@ -175,25 +189,25 @@ export default function Terminal() {
         className="min-h-svh rounded-lg border"
       >
         <ResizablePanel defaultSize={40}>
-          <div className="h-60">
-            <h2 className=" text-center">Watchlist</h2>
-            <ScrollArea>
-              <div>
-                {scripts.map((script) => (
-                  <Ticker key={script.token} vy={vy.current!} script={script} />
-                ))}
+          {/* <div className="h-60"> */}
+          <h2 className=" text-center">Watchlist</h2>
+          <ScrollArea className="h-full">
+            <div>
+              {scripts.map((script) => (
+                <Ticker key={script.token} vy={vy.current!} script={script} />
+              ))}
 
-                <div className="flex justify-center w-full mt-2">
-                  <Link
-                    href="/terminal/add"
-                    className={buttonVariants({ variant: "outline" })}
-                  >
-                    <PlusIcon className="w-4 h-4 mr-2" /> Add
-                  </Link>
-                </div>
+              <div className="flex justify-center w-full mt-2">
+                <Link
+                  href="/terminal/add"
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  <PlusIcon className="w-4 h-4 mr-2" /> Add
+                </Link>
               </div>
-            </ScrollArea>
-          </div>
+            </div>
+          </ScrollArea>
+          {/* </div> */}
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={30}>

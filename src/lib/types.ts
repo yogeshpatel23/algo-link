@@ -88,6 +88,46 @@ export type BrokerOrder = {
   ltp?: string;
 };
 
+export type PositionResponse = {
+  stat: string;
+  exch: string;
+  tsym: string;
+  token: string;
+  uid: string;
+  actid: string;
+  prd: string;
+  netqty: string;
+  netavgprc: string;
+  daybuyqty: string;
+  daysellqty: string;
+  daybuyavgprc: string;
+  daysellavgprc: string;
+  daybuyamt: string;
+  daysellamt: string;
+  cfbuyqty: string;
+  cforgavgprc: string;
+  cfsellqty: string;
+  cfbuyavgprc: string;
+  cfsellavgprc: string;
+  cfbuyamt: string;
+  cfsellamt: string;
+  openbuyqty: string;
+  opensellqty: string;
+  openbuyamt: string;
+  opensellamt: string;
+  openbuyavgprc: string;
+  opensellavgprc: string;
+  mult: string;
+  lp: string;
+  rpnl: string;
+  urmtom: string;
+  bep: string;
+  pp: string;
+  prcftr: string;
+  ti: string;
+  ls: string;
+};
+
 //  WS Types
 export type WsConnect = {
   t: "ck";

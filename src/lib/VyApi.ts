@@ -4,6 +4,7 @@ import {
   BrokerOrder,
   CancelOrderResponse,
   OrderResponse,
+  PositionResponse,
   SearchScriptResponse,
 } from "./types";
 
@@ -21,4 +22,5 @@ export interface VyApi {
     norenordno: string
   ): Promise<CancelOrderResponse | BrokerErrorResponse>;
   getOrderBook(): Promise<BrokerOrder[] | BrokerErrorResponse>;
+  getPositionBook(): Promise<PositionResponse[] | BrokerErrorResponse>;
 }

@@ -5,6 +5,7 @@ import {
   BrokerOrder,
   CancelOrderResponse,
   OrderResponse,
+  PositionResponse,
   SearchScriptResponse,
 } from "./types";
 import { MOrder, OrderType } from "@/model/orderSchema";
@@ -88,6 +89,13 @@ export class FlattradeApi implements VyApi {
     return await this.postCall<BrokerOrder[] | BrokerErrorResponse>(
       "/OrderBook",
       { uid: this.uid }
+    );
+  }
+
+  async getPositionBook(): Promise<PositionResponse[] | BrokerErrorResponse> {
+    return await this.postCall<PositionResponse[] | BrokerErrorResponse>(
+      "/PositionBook",
+      { uid: this.uid, actid: this.uid }
     );
   }
 

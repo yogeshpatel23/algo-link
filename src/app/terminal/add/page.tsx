@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { VyApi } from "@/lib/VyApi";
+import { FinvasiaApi } from "@/lib/finvasiaApi";
 import { FlattradeApi } from "@/lib/flattradeApi";
 import { NFOScript, NSEScript } from "@/lib/types";
 import { RootState } from "@/store";
@@ -37,7 +38,7 @@ export default function AddScript() {
     if (selectedAcc?.broker === "flattrade") {
       vy.current = new FlattradeApi(selectedAcc.userId, selectedAcc.token!);
     } else {
-      throw new Error("invalid borker");
+      vy.current = new FinvasiaApi(selectedAcc.userId, selectedAcc.token!);
     }
   }, []);
 

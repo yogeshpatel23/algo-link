@@ -44,7 +44,7 @@ export default function Home() {
                   <Link
                     href={
                       account.broker === "finvasia"
-                        ? "/"
+                        ? `/finvasia?key=${account.key}&vc=${account.secret}`
                         : `https://auth.flattrade.in/?app_key=${account.key}`
                     }
                     className={buttonVariants({

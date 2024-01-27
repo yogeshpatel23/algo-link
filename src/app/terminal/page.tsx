@@ -25,6 +25,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FinvasiaApi } from "@/lib/finvasiaApi";
 
 export default function Terminal() {
   const scripts = useSelector((store: RootState) => store.watchlist.scripts);
@@ -42,7 +43,7 @@ export default function Terminal() {
     if (selectAcc?.broker === "flattrade") {
       vy.current = new FlattradeApi(selectAcc.userId, selectAcc.token!);
     } else {
-      throw new Error("invalid borker");
+      vy.current = new FinvasiaApi(selectAcc.userId, selectAcc.token!);
     }
 
     getOrders(vy.current);

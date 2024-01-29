@@ -90,12 +90,13 @@ export type BrokerOrder = {
 
 export type PositionResponse = {
   stat: string;
-  exch: string;
-  tsym: string;
-  token: string;
   uid: string;
   actid: string;
+  exch: string;
+  tsym: string;
+  s_prdt_ali: string;
   prd: string;
+  token: string;
   netqty: string;
   netavgprc: string;
   daybuyqty: string;
@@ -172,7 +173,7 @@ type WsOrderUpdate = {
   pcode: string; // "I",
   remarks: string; // "algo-link",
   rejreason?: string; //
-  status: "PENDING" | "OPEN" | "CANCELED" | "REJECTED";
+  status: "PENDING" | "OPEN" | "CANCELED" | "REJECTED" | "COMPLETE";
   reporttype:
     | "NewAck"
     | "PendingNew"
@@ -183,6 +184,7 @@ type WsOrderUpdate = {
     | "PendingCancel"
     | "Canceled"
     | "Rejected"
+    | "Fill"
     | string;
   prctyp: string; // "LMT",
   ret: string; // "DAY",

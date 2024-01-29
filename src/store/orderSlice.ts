@@ -22,7 +22,7 @@ const orderSlice = createSlice({
     },
     removeOrdrer: (state, action: PayloadAction<string>) => {
       state.orders = state.orders.filter(
-        (order) => order.norenordno === action.payload
+        (order) => order.norenordno !== action.payload
       );
     },
   },

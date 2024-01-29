@@ -55,7 +55,6 @@ const Ticker = ({
   async function onSubmit(data: OrderType) {
     try {
       const res = await vy.placeOrder(data);
-      console.log(res);
       if (res.stat === "Not_Ok") {
         toast({
           variant: "destructive",
@@ -93,7 +92,10 @@ const Ticker = ({
             </div>
             <div className="flex justify-end items-center flex-[1_1_70px] h-[26px] overflow-hidden max-w-full mx-2">
               <span className="w-full overflow-hidden  text-right">
-                {((Number(script.ltp) * Number(script.cp)) / 100).toFixed(2)}
+                {(
+                  Number(script.ltp) -
+                  Number(script.ltp) / (1 + Number(script.cp) / 100)
+                ).toFixed(2)}
               </span>
             </div>
             <div className="flex justify-end items-center flex-[1_1_60px] h-[26px] overflow-hidden max-w-full mr-4">

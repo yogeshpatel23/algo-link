@@ -26,6 +26,8 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FinvasiaApi } from "@/lib/finvasiaApi";
+import { initPosition, updatePositionLtp } from "@/store/positonSlice";
+import Position from "@/components/Position";
 
 export default function Terminal() {
   const scripts = useSelector((store: RootState) => store.watchlist.scripts);
@@ -33,6 +35,7 @@ export default function Terminal() {
     (store: RootState) => store.accounts.selectedAcc
   );
   const orderList = useSelector((store: RootState) => store.order.orders);
+  const positions = useSelector((store: RootState) => store.positons.positions);
   const dispatch = useDispatch();
   const { toast } = useToast();
   const ws = useRef<WebSocket>();
@@ -55,10 +58,10 @@ export default function Terminal() {
     ws.current.onmessage = wsMsg;
 
     ws.current.onclose = (ev) => {
-      // console.log(ev);
+      console.log(ev);
     };
     ws.current.onerror = (ev) => {
-      // console.log(ev);
+      console.log(ev);
     };
 
     return () => {
@@ -91,7 +94,7 @@ export default function Terminal() {
         toast({ description: res.emsg }); //Error Occurred : 5 \"no data\"
         return;
       }
-      console.log(res);
+      dispatch(initPosition(res));
     } catch (error: any) {
       toast({ description: error.message });
     }
@@ -118,7 +121,9 @@ export default function Terminal() {
         tokens = [
           ...tokens,
           ...orderList.map((order) => `${order.exch}|${order.token}`),
+          ...positions.map((position) => `${position.exch}|${position.token}`),
         ];
+        console.log(tokens);
         // Subscribe Order update
         ws.current?.send(
           JSON.stringify({
@@ -140,9 +145,11 @@ export default function Terminal() {
         if (data.lp && data.pc) {
           dispatch(updateScript({ token: data.tk, lp: data.lp, pc: data.pc }));
           dispatch(updateOrderLtp({ token: data.tk, lp: data.lp }));
+          dispatch(updatePositionLtp({ token: data.tk, lp: data.lp }));
         } else if (data.lp) {
           dispatch(updateScript({ token: data.tk, lp: data.lp }));
           dispatch(updateOrderLtp({ token: data.tk, lp: data.lp }));
+          dispatch(updatePositionLtp({ token: data.tk, lp: data.lp }));
         } else if (data.pc) {
           dispatch(updateScript({ token: data.tk, pc: data.pc }));
         }
@@ -156,14 +163,22 @@ export default function Terminal() {
           case "Canceled":
             dispatch(removeOrdrer(data.norenordno));
             break;
+          case "Fill":
+            if (data.status === "COMPLETE") {
+              dispatch(removeOrdrer(data.norenordno));
+            } else {
+              console.log(data);
+            }
+
+            break;
           case "Rejected":
             toast({ variant: "destructive", description: data.rejreason });
             break;
-          case "NewAck" ||
-            "ModAck" ||
-            "PendingNew" ||
-            "PendingReplace" ||
-            "PendingReplace":
+          case "NewAck":
+          case "ModAck":
+          case "PendingNew":
+          case "PendingReplace":
+          case "PendingCancel":
             console.log(data.status);
             break;
 
@@ -223,6 +238,13 @@ export default function Terminal() {
         <ResizablePanel defaultSize={30}>
           <div>
             <h2 className="text-center">Positions</h2>
+            {positions.map((position) => (
+              <Position
+                key={position.tsym}
+                position={position}
+                vy={vy.current!}
+              />
+            ))}
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
